@@ -1,0 +1,48 @@
+version: "3.8"
+services:
+  app:
+    build: .
+    image: bootcamp/ms-customer
+    container_name: mscustomers
+    hostname: MS-CUSTOMERS
+    ports:
+      - "${APP_PORT:-8081}:${APP_PORT_CONTAINER:-8081}"
+    environment:
+      SERVER_PORT: "${APP_PORT_CONTAINER}"
+      LOG_PATH: $LOG_PATH
+      SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE}"
+      SPRING_DATA_MONGODB_HOST: $MONGO_DB_HOST
+      SPRING_DATA_MONGODB_PORT: $MONGO_DB_PORT
+      SPRING_DATA_MONGODB_DATABASE: "${MONGO_DB_DATABASE}"
+      SPRING_DATA_MONGODB_USERNAME: "${MONGO_DB_USERNAME}"
+      SPRING_DATA_MONGODB_PASSWORD: "${MONGO_DB_PASSWORD}"
+      EUREKA_HOSTNAME: $EUREKA_HOSTNAME
+      EUREKA_PORT: $EUREKA_PORT
+    depends_on:
+      - mongodb
+    networks:
+      - main-network
+      
+  mongodb:
+    image: mongo
+    container_name: mongodbcustomers
+    hostname: $MONGO_DB_HOST
+    ports:
+      - "${MONGO_DB_PORT:-27017}:${MONGO_DB_PORT:-27017}"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "${MONGO_ROOT_USERNAME}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_ROOT_PASSWORD}"
+      MONGO_INITDB_DATABASE: "${MONGO_DB_DATABASE}"
+      MONGO_DB_USERNAME: "${MONGO_DB_USERNAME}"
+      MONGO_DB_PASSWORD: "${MONGO_DB_PASSWORD}"
+    volumes:
+      - $MONGO_DATA_HOST_PATH:/data/db/
+      - $MONGO_LOG_HOST_PATH:/var/log/mongodb/
+      - $MONGO_INITDB_SCRIPTS_HOST_PATH:/docker-entrypoint-initdb.d/
+    networks:
+      - main-network
+    command: ["--bind_ip", "0.0.0.0"]
+      
+networks:
+  main-network:
+      name: $NETWORK_NAME

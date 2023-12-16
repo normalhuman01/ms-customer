@@ -1,0 +1,21 @@
+server:
+  port: 9081
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://mongoAtlas:m0ngo4tlas@cluster0.siwst.mongodb.net/customers?retryWrites=true&w=majority
+
+log:
+  path: /opt/logs/ms-customer
+logging:
+  level:
+    org:
+      mongodb:
+        driver: ERROR
+
+spring.cloud.discovery.enabled: false
+spring.cloud.config.import-check.enabled: false
+
+spring.cloud.config.discovery.enabled: false
+spring.cloud.config.enabled: false
